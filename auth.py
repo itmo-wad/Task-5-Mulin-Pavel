@@ -29,14 +29,15 @@ def login():
 			return render_template('error_login.html')
 	elif request.method == "GET":
 		if 'username' in session:
-			return render_template('main_info.html')
+			avatar =  mongo.db.users.find_one({'username':session['username']})['avatar']
+			return render_template('main_info.html', image=avatar)
 	return render_template('login_page.html')
 
 @app.route('/mainpage')
 def mainpage():
 	if request.method == "GET":
 		if 'username' in session:
-			avatar =  mongo.db.users.find_one({'username':session['current_user']})['avatar']
+			avatar =  mongo.db.users.find_one({'username':session['username']})['avatar']
 			return render_template('main_info.html', image=avatar)
 		else:
 			return redirect ('/')
@@ -46,6 +47,8 @@ def mainpage():
 def showregistered():
 	if 'username' in session:
 		return render_template('main_info.html', users = mongodb_query.showAllUsers())
+	else:
+		return redirect ('/')
 
 @app.route('/register', methods = ['GET','POST'])
 def register():
@@ -83,24 +86,31 @@ def changepass():
 	if request.method == "GET":
 		if 'username' in session:
 			return render_template('changepass_page.html')
+		else:
+			return redirect ('/')
 
 
 @app.route('/up', methods = [ 'post'])
 def upload_file():
-	if request.method == 'POST':
-		# check if the post request has the file part
-		if 'file' not in request.files:
-			flash('No file part')
-			return redirect(request.url)
-		file = request.files['file']
-		# if user does not select file, browser also
-		# submit an empty part without filename
-		if file.filename == '':
-			flash('No selected file')
-			return redirect(request.url)
-		if file:
-			mongo.db.users.update_one({'username': session['username']}, {"$set":{'avatar':base64.b64encode(file.read()).decode()}})
-			return render_template('main_info.html', image=file)
+	if 'username' in session:
+		if request.method == 'POST':
+			# check if the post request has the file part
+			if 'file' not in request.files:
+				flash('No file part')
+				return redirect(url_for("mainpage"))
+			file = request.files['file']
+			# if user does not select file, browser also
+			# submit an empty part without filename
+			if file.filename == '':
+				flash('No selected file')
+				return redirect(url_for("mainpage"))
+			if file:
+				mongo.db.users.update_one({'username': session['username']}, {"$set":{'avatar':base64.b64encode(file.read()).decode()}})
+				flash("Image uploaded")
+			return redirect(url_for("mainpage"))
+	else:
+		return redirect ('/'):
+
 
 
 
