@@ -1,4 +1,4 @@
-from flask import Flask, send_from_directory, request, flash, redirect, session
+from flask import Flask, send_from_directory, request, flash, redirect, session, url_for
 from flask import render_template
 from flask_pymongo import PyMongo
 import os
@@ -30,7 +30,7 @@ def login():
 			return render_template('error_login.html')
 	elif request.method == "GET":
 		if 'username' in session:
-			return render_template('main_info.html')
+			return redirect(url_for("mainpage"))
 	return render_template('login_page.html')
 
 @app.route('/mainpage')
@@ -46,7 +46,8 @@ def mainpage():
 @app.route('/showregistered', methods = ['GET','POST'])
 def showregistered():
 	if 'username' in session:
-		return render_template('main_info.html', users = mongodb_query.showAllUsers())
+		avatar =  mongo.db.users.find_one({'username':session['username']})['avatar']
+		return render_template('main_info.html', image=avatar, users = mongodb_query.showAllUsers())
 	else:
 		return redirect ('/')
 
@@ -54,7 +55,7 @@ def showregistered():
 def register():
 	if request.method == "GET":
 		if 'username' in session:
-			return render_template('main_info.html')
+			return redirect(url_for("mainpage"))
 		else:
 			return render_template('register_page.html')
 	elif request.method == "POST":
@@ -76,7 +77,7 @@ def changepass():
 			if request.form['new_password'] == request.form['new_password2']:
 				if mongodb_query.change_pass(session['username'], request.form['old_password'], request.form['new_password']):
 					flash("Password successfuly canged")
-					return render_template('main_info.html')
+					return redirect(url_for("mainpage"))
 				else:
 					flash("Wrong old password")
 					return render_template('changepass_page.html')

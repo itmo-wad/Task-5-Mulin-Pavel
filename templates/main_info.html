@@ -18,13 +18,11 @@
         <input type=submit value=Upload>
       </form>
 
-  <button onclick="location.href = '/avatars/admin'">show img</button>
-
-  <p>Image</p>
+  <p>Your avatar:</p>
 	{% if image %}
 	<p><img src="data:image/png;base64, {{image}}" style="width: 400px;"/></p>
 	{% else %}
-	<p>You have no avatar</p>
+	<p>You haven't upload image</p>
 	{% endif %}
 
   <button onclick="location.href = '/showregistered'">backdoor</button>
