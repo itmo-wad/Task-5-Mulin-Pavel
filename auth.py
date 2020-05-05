@@ -3,6 +3,7 @@ from flask import render_template
 from flask_pymongo import PyMongo
 import os
 import mongodb_query
+import base64
 
 
 
