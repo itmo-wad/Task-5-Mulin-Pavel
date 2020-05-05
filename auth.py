@@ -108,7 +108,7 @@ def upload_file():
 				flash("Image uploaded")
 			return redirect(url_for("mainpage"))
 	else:
-		return redirect ('/'):
+		return redirect ('/')
 
 
 
