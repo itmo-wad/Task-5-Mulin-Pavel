@@ -29,8 +29,7 @@ def login():
 			return render_template('error_login.html')
 	elif request.method == "GET":
 		if 'username' in session:
-			avatar =  mongo.db.users.find_one({'username':session['username']})['avatar']
-			return render_template('main_info.html', image=avatar)
+			return render_template('main_info.html')
 	return render_template('login_page.html')
 
 @app.route('/mainpage')
