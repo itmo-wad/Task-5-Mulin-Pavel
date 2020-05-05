@@ -36,7 +36,8 @@ def login():
 def mainpage():
 	if request.method == "GET":
 		if 'username' in session:
-			return render_template('main_info.html')
+			avatar =  mongo.db.users.find_one({'username':session['current_user']})['avatar']
+			return render_template('main_info.html', image=avatar)
 		else:
 			return redirect ('/')
 
@@ -82,6 +83,25 @@ def changepass():
 	if request.method == "GET":
 		if 'username' in session:
 			return render_template('changepass_page.html')
+
+
+@app.route('/up', methods = [ 'post'])
+def upload_file():
+	if request.method == 'POST':
+		# check if the post request has the file part
+		if 'file' not in request.files:
+			flash('No file part')
+			return redirect(request.url)
+		file = request.files['file']
+		# if user does not select file, browser also
+		# submit an empty part without filename
+		if file.filename == '':
+			flash('No selected file')
+			return redirect(request.url)
+		if file:
+			mongo.db.users.update_one({'username': session['username']}, {"$set":{'avatar':base64.b64encode(file.read()).decode()}})
+			return render_template('main_info.html', image=file)
+
 
 
 

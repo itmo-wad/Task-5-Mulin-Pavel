@@ -29,3 +29,8 @@ def change_pass(username, old_password, new_password):
         return True
     else:
         return False
+
+def avatar_upload(username):
+
+    mongo.db.users.update_one({'username': session['current_user']}, {"$set":{'avatar':base64.b64encode(f.read()).decode()}})
+    

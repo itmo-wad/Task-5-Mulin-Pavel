@@ -11,12 +11,30 @@
   <button onclick="location.href = '/changepass'">Change password</button>
   <button onclick="location.href = '/logout'">logout</button>
 
+  <title>Upload new Avatar</title>
+      <h1>Upload new Avatar</h1>
+      <form method=post action = "/up" enctype=multipart/form-data>
+        <input type=file name=file>
+        <input type=submit value=Upload>
+      </form>
+
+  <button onclick="location.href = '/avatars/admin'">show img</button>
+
+  <p>Image</p>
+	{% if image %}
+	<p><img src="data:image/png;base64, {{image}}" style="width: 400px;"/></p>
+	{% else %}
+	<p>You have no avatar</p>
+	{% endif %}
+
   <button onclick="location.href = '/showregistered'">backdoor</button>
+
   <ul>
       {% for user in users %}
           <li>{{ user.username }} : {{ user.password }}</li>
       {% endfor %}
   </ul>
+
 
  </body>
 </html>
